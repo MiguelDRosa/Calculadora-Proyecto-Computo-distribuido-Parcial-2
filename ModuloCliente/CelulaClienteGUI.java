@@ -134,7 +134,7 @@ public class CelulaClienteGUI extends JFrame {
                 while (true) {
                     Mensaje msg = (Mensaje) in.readObject();
 
-                    // Prevenir duplicados: ¿Aún espero esta respuesta?
+                    
                     if (msg.codigoContenido.endsWith("_RES") && solicitudesPendientes.contains(msg.idSolicitudOriginal)) {
                         solicitudesPendientes.remove(msg.idSolicitudOriginal);
                         
@@ -175,7 +175,7 @@ public class CelulaClienteGUI extends JFrame {
             double n2 = Double.parseDouble(num2);
 
             Mensaje peticion = new Mensaje(reqCode, n1, n2, idCliente);
-            solicitudesPendientes.add(peticion.idMensaje); // Agregamos a lista de espera
+            solicitudesPendientes.add(peticion.idMensaje); 
 
             out.writeObject(peticion);
             out.flush();

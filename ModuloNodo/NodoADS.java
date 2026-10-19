@@ -15,10 +15,10 @@ public class NodoADS {
     private int puerto;
     private String archivoHistorial;
     
-    // Lista segura para guardar a todos los conectados (otras células u otros nodos)
+   
     private List<ObjectOutputStream> conexionesActivas = new CopyOnWriteArrayList<>();
     
-    // Set seguro para recordar los mensajes que ya vimos (PREVENCIÓN DE CICLOS)
+   
     private Set<String> mensajesProcesados = ConcurrentHashMap.newKeySet();
 
     public NodoADS(int puerto) {
@@ -32,7 +32,7 @@ public class NodoADS {
         System.out.println("==========================================");
         guardarEnHistorial("NODO INICIADO - Escuchando en puerto " + puerto);
 
-        // Hilo principal para aceptar conexiones entrantes
+
         new Thread(() -> {
             try (ServerSocket serverSocket = new ServerSocket(puerto)) {
                 while (true) {
@@ -44,7 +44,7 @@ public class NodoADS {
                     guardarEnHistorial("NUEVA CONEXIÓN RECIBIDA.");
                     System.out.println("[+] Nueva conexión establecida. Total conectados: " + conexionesActivas.size());
                     
-                    // Iniciar un hilo para escuchar a esta nueva conexión
+                  
                     new Thread(() -> escucharConexion(in, out)).start();
                 }
             } catch (IOException e) {
@@ -53,7 +53,7 @@ public class NodoADS {
         }).start();
     }
 
-    // Método para conectar este nodo con otros nodos de la malla
+    
     public void conectarConOtroNodo(String host, int puertoDestino) {
         try {
             Socket socket = new Socket(host, puertoDestino);
@@ -70,19 +70,19 @@ public class NodoADS {
         }
     }
 
-    // Método que escucha los mensajes entrantes
+   
     private void escucharConexion(ObjectInputStream in, ObjectOutputStream outPropio) {
         try {
             while (true) {
                 Mensaje msg = (Mensaje) in.readObject();
                 
-                // PREVENCIÓN DE CICLOS: ¿Ya vi este mensaje antes?
+                
                 if (mensajesProcesados.contains(msg.idMensaje)) {
                     guardarEnHistorial("CICLO EVITADO: Mensaje duplicado ignorado -> " + msg.idMensaje);
-                    continue; // Lo ignora y no hace broadcast
+                    continue; 
                 }
 
-                // Si es nuevo, lo registro y hago broadcast
+              
                 mensajesProcesados.add(msg.idMensaje);
                 guardarEnHistorial("BROADCAST: " + msg.toString());
                 System.out.println("[BROADCAST] " + msg.codigoContenido + " de " + msg.idRemitente);
@@ -95,7 +95,7 @@ public class NodoADS {
         }
     }
 
-    // Enviar el mensaje a todos los conectados EXCEPTO al que nos lo acaba de enviar
+    
     private void difundirMensaje(Mensaje msg, ObjectOutputStream outOrigen) {
         for (ObjectOutputStream out : conexionesActivas) {
             if (out != outOrigen) {
@@ -109,7 +109,7 @@ public class NodoADS {
         }
     }
 
-    // Reutilizamos tu método exacto del primer parcial para los TXT
+  
     private synchronized void guardarEnHistorial(String evento) {
         String fechaHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         try (FileWriter fw = new FileWriter(archivoHistorial, true);
@@ -120,9 +120,9 @@ public class NodoADS {
         }
     }
 
-    // Main para arrancar el nodo
+   
     public static void main(String[] args) {
-        int puertoLocal = 8001; // Puerto por defecto para que funcione con el botón "Run"
+        int puertoLocal = 8001; 
         
         if (args.length > 0) {
             puertoLocal = Integer.parseInt(args[0]);
@@ -131,7 +131,7 @@ public class NodoADS {
         NodoADS miNodo = new NodoADS(puertoLocal);
         miNodo.iniciar();
 
-        // Conectar automáticamente a los otros nodos si se pasan por argumentos en la consola
+       
         for (int i = 1; i < args.length; i++) {
             miNodo.conectarConOtroNodo("localhost", Integer.parseInt(args[i]));
         }

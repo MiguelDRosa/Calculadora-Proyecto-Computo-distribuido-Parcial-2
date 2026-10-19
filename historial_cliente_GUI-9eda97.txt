@@ -1,0 +1,5 @@
+[14:02:15] Conectado al Nodo ADS en puerto 8001
+[14:02:21] Enviado broadcast: SUM_REQ [2.0 + 2.0]
+[14:02:21] Resultado validado de SRV-+-3db5f -> 4.0
+[14:02:26] Enviado broadcast: SUB_REQ [4.0 - 3.0]
+[14:02:26] Resultado validado de SRV---bcbf8 -> 1.0

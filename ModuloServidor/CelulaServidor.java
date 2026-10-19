@@ -8,9 +8,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class CelulaServidor {
-    private String tipoOperacion; // "+", "-", "*", "/"
-    private String reqCode;       // Ej: SUM_REQ
-    private String resCode;       // Ej: SUM_RES
+    private String tipoOperacion;
+    private String reqCode;       
+    private String resCode;       
     
     private String idServidor;
     private String archivoHistorial;
@@ -31,7 +31,7 @@ public class CelulaServidor {
         conectarAlNodo(host, puertoNodo);
     }
 
-    // Configura los Códigos de Contenido exactos que pide el PDF
+    
     private void configurarCodigos() {
         switch (tipoOperacion) {
             case "+": reqCode = "SUM_REQ"; resCode = "SUM_RES"; break;
@@ -50,7 +50,7 @@ public class CelulaServidor {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
             
-            guardarHistorial("Conectado exitosamente al Nodo en puerto " + puerto);
+            guardarHistorial("Conectado al Nodo en el puerto " + puerto);
             System.out.println("[*] Conectado al Campo de Datos. Escuchando peticiones: " + reqCode);
             
             escucharCampoDeDatos();
@@ -65,14 +65,14 @@ public class CelulaServidor {
             while (true) {
                 Mensaje msg = (Mensaje) in.readObject();
                 
-                // ¿El mensaje es una petición y es de mi especialidad?
+                
                 if (msg.codigoContenido.equals(reqCode)) {
                     guardarHistorial("PETICIÓN ATRAPADA: " + msg.idMensaje + " de " + msg.idRemitente);
                     System.out.println("\n[!] Resolviendo petición: " + msg.num1 + " " + tipoOperacion + " " + msg.num2);
                     
                     double resultado = calcular(msg.num1, msg.num2);
                     
-                    // Crear mensaje de respuesta
+                   
                     Mensaje respuesta = new Mensaje(resCode, msg.idMensaje, resultado, idServidor);
                     
                     out.writeObject(respuesta);
@@ -96,7 +96,7 @@ public class CelulaServidor {
             case "/": 
                 if (n2 == 0) {
                     System.out.println("    -> Error: División entre cero.");
-                    return Double.NaN; // Representa error numérico
+                    return Double.NaN; 
                 }
                 return n1 / n2;
         }
@@ -121,7 +121,7 @@ public class CelulaServidor {
             op = args[0];
             puerto = Integer.parseInt(args[1]);
         } else {
-            // Si lo ejecutas desde el botón "Run", te pregunta con una ventana
+           
             String[] opciones = {"+", "-", "*", "/"};
             op = (String) javax.swing.JOptionPane.showInputDialog(
                     null, 
@@ -132,7 +132,7 @@ public class CelulaServidor {
                     opciones, 
                     opciones[0]);
             
-            // Si el usuario cancela la ventana, cerramos
+           
             if (op == null) {
                 System.exit(0);
             }

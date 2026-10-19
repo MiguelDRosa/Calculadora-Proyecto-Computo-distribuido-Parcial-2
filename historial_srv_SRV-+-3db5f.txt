@@ -1,0 +1,4 @@
+[14:01:52] Conectado exitosamente al Nodo en puerto 8001
+[14:02:21] PETICIÓN ATRAPADA: MSG-5ae171 de GUI-9eda97
+[14:02:21] RESPUESTA ENVIADA: 4.0
+[14:17:39] Desconectado del nodo.

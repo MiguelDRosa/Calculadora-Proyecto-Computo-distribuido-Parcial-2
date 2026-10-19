@@ -1,0 +1,4 @@
+[14:02:03] Conectado exitosamente al Nodo en puerto 8001
+[14:02:26] PETICIÓN ATRAPADA: MSG-aad345 de GUI-9eda97
+[14:02:26] RESPUESTA ENVIADA: 1.0
+[14:17:39] Desconectado del nodo.
