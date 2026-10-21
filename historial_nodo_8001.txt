@@ -1,8 +1,0 @@
-[2026-10-19 14:01:32] NODO INICIADO - Escuchando en puerto 8001
-[2026-10-19 14:01:52] NUEVA CONEXIÓN RECIBIDA.
-[2026-10-19 14:02:03] NUEVA CONEXIÓN RECIBIDA.
-[2026-10-19 14:02:15] NUEVA CONEXIÓN RECIBIDA.
-[2026-10-19 14:02:21] BROADCAST: Mensaje[MSG-5ae171] | Codigo: SUM_REQ | Orig: N/A | Remitente: GUI-9eda97
-[2026-10-19 14:02:21] BROADCAST: Mensaje[MSG-9a2207] | Codigo: SUM_RES | Orig: MSG-5ae171 | Remitente: SRV-+-3db5f
-[2026-10-19 14:02:26] BROADCAST: Mensaje[MSG-aad345] | Codigo: SUB_REQ | Orig: N/A | Remitente: GUI-9eda97
-[2026-10-19 14:02:26] BROADCAST: Mensaje[MSG-596f41] | Codigo: SUB_RES | Orig: MSG-aad345 | Remitente: SRV---bcbf8

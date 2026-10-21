@@ -206,7 +206,14 @@ public class CelulaClienteGUI extends JFrame {
 
     public static void main(String[] args) {
         int puerto = 8001;
-        if (args.length > 0) puerto = Integer.parseInt(args[0]);
+        if (args.length > 0) {
+            puerto = Integer.parseInt(args[0]);
+        } else {
+            String strPuerto = javax.swing.JOptionPane.showInputDialog(null, "Puerto del Nodo al que conectará la GUI:", "8001");
+            if (strPuerto != null && !strPuerto.trim().isEmpty()) {
+                puerto = Integer.parseInt(strPuerto.trim());
+            }
+        }
         
         int finalPuerto = puerto;
         SwingUtilities.invokeLater(() -> new CelulaClienteGUI("localhost", finalPuerto).setVisible(true));

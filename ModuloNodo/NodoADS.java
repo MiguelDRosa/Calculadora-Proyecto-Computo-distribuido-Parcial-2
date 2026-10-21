@@ -15,10 +15,7 @@ public class NodoADS {
     private int puerto;
     private String archivoHistorial;
     
-   
     private List<ObjectOutputStream> conexionesActivas = new CopyOnWriteArrayList<>();
-    
-   
     private Set<String> mensajesProcesados = ConcurrentHashMap.newKeySet();
 
     public NodoADS(int puerto) {
@@ -32,7 +29,6 @@ public class NodoADS {
         System.out.println("==========================================");
         guardarEnHistorial("NODO INICIADO - Escuchando en puerto " + puerto);
 
-
         new Thread(() -> {
             try (ServerSocket serverSocket = new ServerSocket(puerto)) {
                 while (true) {
@@ -44,7 +40,6 @@ public class NodoADS {
                     guardarEnHistorial("NUEVA CONEXIÓN RECIBIDA.");
                     System.out.println("[+] Nueva conexión establecida. Total conectados: " + conexionesActivas.size());
                     
-                  
                     new Thread(() -> escucharConexion(in, out)).start();
                 }
             } catch (IOException e) {
@@ -53,7 +48,6 @@ public class NodoADS {
         }).start();
     }
 
-    
     public void conectarConOtroNodo(String host, int puertoDestino) {
         try {
             Socket socket = new Socket(host, puertoDestino);
@@ -62,27 +56,23 @@ public class NodoADS {
             
             conexionesActivas.add(out);
             guardarEnHistorial("CONECTADO COMO CLIENTE AL NODO EN PUERTO " + puertoDestino);
-            System.out.println("[*] Conectado exitosamente a nodo en " + puertoDestino);
+            System.out.println("[*] Conectado exitosamente a nodo vecino en puerto " + puertoDestino);
             
             new Thread(() -> escucharConexion(in, out)).start();
         } catch (Exception e) {
-            System.out.println("[-] No se pudo conectar al puerto " + puertoDestino + ". Quiza no ha encendido.");
         }
     }
 
-   
     private void escucharConexion(ObjectInputStream in, ObjectOutputStream outPropio) {
         try {
             while (true) {
                 Mensaje msg = (Mensaje) in.readObject();
                 
-                
                 if (mensajesProcesados.contains(msg.idMensaje)) {
                     guardarEnHistorial("CICLO EVITADO: Mensaje duplicado ignorado -> " + msg.idMensaje);
-                    continue; 
+                    continue;
                 }
 
-              
                 mensajesProcesados.add(msg.idMensaje);
                 guardarEnHistorial("BROADCAST: " + msg.toString());
                 System.out.println("[BROADCAST] " + msg.codigoContenido + " de " + msg.idRemitente);
@@ -91,11 +81,10 @@ public class NodoADS {
             }
         } catch (Exception e) {
             conexionesActivas.remove(outPropio);
-            System.out.println("[-] Conexión perdida. Total conectados: " + conexionesActivas.size());
+            System.out.println("[-] Conexión cerrada. Total conectados: " + conexionesActivas.size());
         }
     }
 
-    
     private void difundirMensaje(Mensaje msg, ObjectOutputStream outOrigen) {
         for (ObjectOutputStream out : conexionesActivas) {
             if (out != outOrigen) {
@@ -109,7 +98,6 @@ public class NodoADS {
         }
     }
 
-  
     private synchronized void guardarEnHistorial(String evento) {
         String fechaHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         try (FileWriter fw = new FileWriter(archivoHistorial, true);
@@ -120,20 +108,34 @@ public class NodoADS {
         }
     }
 
-   
     public static void main(String[] args) {
-        int puertoLocal = 8001; 
-        
+        int puertoAsignado = -1;
+
         if (args.length > 0) {
-            puertoLocal = Integer.parseInt(args[0]);
+            puertoAsignado = Integer.parseInt(args[0]);
+        } else {
+            
+            for (int p = 8001; p <= 8020; p++) {
+                try (ServerSocket ss = new ServerSocket(p)) {
+                    puertoAsignado = p;
+                    break; 
+                } catch (IOException e) {
+                    
+                }
+            }
         }
-        
-        NodoADS miNodo = new NodoADS(puertoLocal);
+
+        if (puertoAsignado == -1) {
+            System.err.println("No se encontraron puertos libres entre 8001 y 8020.");
+            return;
+        }
+
+        NodoADS miNodo = new NodoADS(puertoAsignado);
         miNodo.iniciar();
 
-       
-        for (int i = 1; i < args.length; i++) {
-            miNodo.conectarConOtroNodo("localhost", Integer.parseInt(args[i]));
+    
+        for (int p = 8001; p < puertoAsignado; p++) {
+            miNodo.conectarConOtroNodo("localhost", p);
         }
     }
 }

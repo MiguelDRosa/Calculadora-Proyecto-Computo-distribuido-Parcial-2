@@ -113,15 +113,14 @@ public class CelulaServidor {
         }
     }
 
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         String op = "+";
-        int puerto = 8001;
+        int puerto = 8001; 
         
         if (args.length >= 2) {
             op = args[0];
             puerto = Integer.parseInt(args[1]);
         } else {
-           
             String[] opciones = {"+", "-", "*", "/"};
             op = (String) javax.swing.JOptionPane.showInputDialog(
                     null, 
@@ -132,9 +131,12 @@ public class CelulaServidor {
                     opciones, 
                     opciones[0]);
             
-           
-            if (op == null) {
-                System.exit(0);
+            if (op == null) System.exit(0);
+
+            
+            String strPuerto = javax.swing.JOptionPane.showInputDialog(null, "Puerto del Nodo al que se conectará:", "8001");
+            if (strPuerto != null && !strPuerto.trim().isEmpty()) {
+                puerto = Integer.parseInt(strPuerto.trim());
             }
         }
         
